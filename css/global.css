@@ -1,0 +1,11 @@
+body.duck{
+  background-image: url('http://cs.oswego.edu/~bgoldber/Images/rubber-duck.jpeg');
+  background-repeat: no-repeat;
+  background-position-x:50%;
+}
+p{
+  font-size: 1.4em;
+}
+p.center {
+  text-align: center;
+}
