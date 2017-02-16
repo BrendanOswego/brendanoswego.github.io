@@ -2,3 +2,5 @@ com.example.brendan.mainpackage
 com.example.brendan.mainpackage.api
 com.example.brendan.mainpackage.event
 com.example.brendan.mainpackage.model
+com.example.brendan.mainpackage.onboarding
+com.example.brendan.mainpackage.view
