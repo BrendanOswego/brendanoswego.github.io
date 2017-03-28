@@ -1,36 +1,52 @@
-// server.js
-
-// BASE SETUP
-// =============================================================================
-
-// call the packages we need
-var express    = require('express');        // call express
-var app        = express();                 // define our app using express
+var express = require('express');
+var app = express();
 var bodyParser = require('body-parser');
-
-// configure app to use bodyParser()
-// this will let us get the data from a POST
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
-var port = process.env.PORT || 8080;        // set our port
+var port = process.env.PORT || 8080;
 
-// ROUTES FOR OUR API
-// =============================================================================
-var router = express.Router();              // get an instance of the express Router
+var router = express.Router();
 
-// test route to make sure everything is working (accessed at GET http://localhost:8080/api)
-router.get('/', function(req, res) {
-    res.json({ message: 'hooray! welcome to our api!' });
+router.use(function(res,res,next){
+    console.log('Something is happening');
+    next();
 });
 
-// more routes for our API will happen here
+router.get('/',function(req,res){
+  res.json({message: 'Welcome to my API'});
+});
 
-// REGISTER OUR ROUTES -------------------------------
-// all of our routes will be prefixed with /api
-app.use('/api', router);
+router.route('/notes')
+  .post(function(req,res){
+    var note = new Note();
+    note.name = req.body.name;
+    note.save(function(err){
+      if(err){
+        res.send(err);
+      }
+      res.json({
+        message: 'Note Created'
+    })
+  })
+  .get(function(req,res){
+    Note.find(function(err,notes){
+      if(err){
+        res.send(err);
+      }
+      res.json(notes);
+    });
+  });
 
-// START THE SERVER
-// =============================================================================
+});
+
+app.use('/api',router);
+
 app.listen(port);
-console.log('Magic happens on port ' + port);
+
+console.log('Using port: ' + port);
+
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://BrendanOswego:Newyork96!@ds143980.mlab.com:43980/brendanapi')
+
+var Note = require('./model/note');
