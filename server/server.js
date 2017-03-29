@@ -18,27 +18,57 @@ router.get('/',function(req,res){
 });
 
 router.route('/notes')
-  .post(function(req,res){
-    var note = new Note();
-    note.name = req.body.name;
-    note.save(function(err){
+
+    // create a bear (accessed at POST http://localhost:8080/api/bears)
+    .post(function(req, res) {
+
+        var note = new Note();      // create a new instance of the Bear model
+        note.name = req.body.name;  // set the bears name (comes from the request)
+
+        // save the bear and check for errors
+        note.save(function(err) {
+            if (err)
+                res.send(err);
+
+            res.json({ message: 'Note created!' });
+        });
+
+    })
+
+    .get(function(req,res){
+      Note.find(function(err,notes){
+        if(err){
+          res.send(err);
+        }
+        res.json(notes);
+      });
+    });
+
+router.route('/notes/:note_id')
+  .get(function(req,res){
+    Note.findById(req.params.note_id,function(err,note){
       if(err){
         res.send(err);
       }
-      res.json({
-        message: 'Note Created'
+      res.json(note);
     })
   })
-  .get(function(req,res){
-    Note.find(function(err,notes){
+  .put(function(req,res){
+    Note.findById(req.params.note_id,function(err,note){
       if(err){
         res.send(err);
       }
-      res.json(notes);
-    });
-  });
-
-});
+      note.name = req.body.name;
+      note.save(function(err){
+        if(err){
+          res.send(err);
+        }
+        res.json({
+          message: 'Note has been updated'
+        })
+      });
+    })
+  })
 
 app.use('/api',router);
 
@@ -47,6 +77,6 @@ app.listen(port);
 console.log('Using port: ' + port);
 
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://BrendanOswego:Newyork96!@ds143980.mlab.com:43980/brendanapi')
+mongoose.connect('mongodb://BrendanOswego:node@ds143980.mlab.com:43980/brendanapi')
 
 var Note = require('./model/note');
